@@ -33,11 +33,19 @@ export async function fetchRevenue() {
 export async function fetchLatestInvoices() {
   try {
     const data = await sql<LatestInvoiceRaw[]>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
-      LIMIT 5`;
+      SELECT
+        invoices.amount, 
+        customers.name, 
+        customers.image_url, 
+        customers.email, 
+        invoices.id
+      FROM
+          invoices
+              JOIN customers ON invoices.customer_id = customers.id
+      ORDER BY 
+          invoices.date DESC
+      LIMIT 5
+    `;
 
     const latestInvoices = data.map((invoice) => ({
       ...invoice,
@@ -52,9 +60,9 @@ export async function fetchLatestInvoices() {
 
 export async function fetchCardData() {
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
+    // 이것들은 하나의 SQL 쿼리로 합칠 수도 있습니다.
+    // 하지만 데모를 위해 의도적으로 분리하여,
+    // JS에서 여러 쿼리를 병렬로 초기화하는 방법을 보여주기 위함입니다.
     const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
     const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
     const invoiceStatusPromise = sql`SELECT
